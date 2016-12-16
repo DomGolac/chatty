@@ -1,13 +1,10 @@
 import React, {Component} from 'react';
 import Message from './Message.jsx';
+import Notification from './Notification.jsx';
 
 class MessageList extends Component {
   render() {
     console.log("Rendering <MessageList/>");
-    if (this.props.messages.length > 0) {
-      this.props.messages.map((message) => {
-      })
-    }
     return (
       <div id="message-list">
         {this.props.messages.map((message) => {
@@ -15,6 +12,13 @@ class MessageList extends Component {
             key={message.id} 
             username={message.username} 
             content={message.content} />;
+        })
+        }
+        {this.props.notifications.map((notification) => {
+          return <Notification 
+            key={notification.id} 
+            username={notification.username} 
+            content={notification.content} />;
         })
         }
       </div>

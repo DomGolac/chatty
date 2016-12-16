@@ -5,26 +5,44 @@ import MessageList from './MessageList.jsx';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = { currentUser: {name: ""}, // optional. if currentUser is not defined, it means the user is Anonymous
-                   messages: []
-                 };
     this.socket = new WebSocket("ws://localhost:4000/socketserver");
-    this.addMessage = this.addMessage.bind(this);
+    this.sendMessage = this.sendMessage.bind(this);
+    this.state = {
+      data: {
+        currentUser: {name: undefined},
+        messages: [],
+        notifications: [],
+        count: 0
+      }
+    }
   }
   
   componentDidMount() {
-    console.log("componentDidMount <App />");    
+    console.log("componentDidMount <App/>");    
     this.socket.onopen = event => {
       console.log("Connected to web socket server");
     };
     this.socket.onmessage = event => {
-      const message = JSON.parse(event.data);
-      this.state.messages.push(message);
-      this.setState({currentUser: {name: message.username}, messages: this.state.messages});
+      let data = JSON.parse(event.data);
+      this.state.data.currentUser.name = data.username;
+      switch (data.type) {
+        case "incomingMessage":
+          this.state.data.messages.push(data);
+        break;
+        case "incomingNotification":
+          this.state.data.notifications.push(data);
+        break;
+        case "incomingCount":
+          this.state.data.count = data.count;
+        break;
+        default:
+          throw new Error("Unknown event type: " + data.type);
+      }
+      this.setState({data: this.state.data});
     };
   }
 
-  addMessage(message) {
+  sendMessage(message) {
     message = JSON.stringify(message);
     this.socket.send(message);
   }
@@ -35,9 +53,10 @@ class App extends Component {
       <div className="wrapper">
         <nav>
           <h1>Chatty</h1>
+          <div className="count"><h3>{this.state.data.count} Users Online</h3></div>
         </nav>
-        <MessageList messages={this.state.messages} />
-        <ChatBar currentUser={this.state.currentUser} addMessage={this.addMessage}/>
+        <MessageList messages={this.state.data.messages} notifications={this.state.data.notifications} />
+        <ChatBar currentUser={this.state.data.currentUser} sendMessage={this.sendMessage} />
       </div> 
     );
   }

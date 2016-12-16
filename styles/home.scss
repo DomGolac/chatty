@@ -16,7 +16,14 @@ nav {
 }
 
 nav h1 { 
+  display: inline;
   margin: 0;
+}
+
+.count {
+  float: right;
+  height: 100%;
+  text-align: center;
 }
 
 #message-list {

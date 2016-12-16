@@ -10,17 +10,28 @@ class ChatBar extends Component {
 
   handleNewMessage(target) {
     if (target.charCode === 13) {
-      const username = document.getElementById("username").value || document.getElementById("username").placeholder;
-      const content = document.getElementById("new-message").value;
+      let username = document.getElementById("username").value || document.getElementById("username").placeholder;
+      let content = document.getElementById("new-message").value;
       document.getElementById("new-message").value = "";
-      const newMessage = {username: username, content: content};
-      this.props.addMessage(newMessage);
+      let newMessage = {type: "postMessage", username: username, content: content};
+      this.props.sendMessage(newMessage);
     }
   }
 
   handleName(target) {
+    let username = this.props.currentUser.name || document.getElementById("username").placeholder;
+    let newUsername = document.getElementById("username").value || document.getElementById("username").placeholder;
     if (target.charCode === 13) {
-      document.getElementById("new-message").focus();
+      if (username !== newUsername) {
+        document.getElementById("new-message").focus();
+        let updatedUsername = {type: "postNotification",
+                               username: newUsername,
+                               content: `${username} has changed their name to ${newUsername}!`};
+        this.props.sendMessage(updatedUsername); 
+
+      } else {
+        document.getElementById("new-message").focus();
+      }
     }
   }
 
