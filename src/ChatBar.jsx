@@ -4,16 +4,23 @@ class ChatBar extends Component {
   
   constructor(props) {
     super(props);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.handleNewMessage = this.handleNewMessage.bind(this);
+    this.handleName = this.handleName.bind(this);
   }
 
-  handleKeyPress(target) {
+  handleNewMessage(target) {
     if (target.charCode === 13) {
-      const username = document.getElementById("username").value;
+      const username = document.getElementById("username").value || document.getElementById("username").placeholder;
       const content = document.getElementById("new-message").value;
       document.getElementById("new-message").value = "";
-      const newMessage = {id: null, username: username, content: content};
-      this.props.onSubmit(newMessage);
+      const newMessage = {username: username, content: content};
+      this.props.addMessage(newMessage);
+    }
+  }
+
+  handleName(target) {
+    if (target.charCode === 13) {
+      document.getElementById("new-message").focus();
     }
   }
 
@@ -21,9 +28,10 @@ class ChatBar extends Component {
     console.log("Rendering <ChatBar/>");
     return (
       <footer>
-        <input id="username" type="text" placeholder="Anonymous" defaultValue={this.props.currentUser.name} />
-        <input id="new-message" type="text" placeholder="Type a message and hit ENTER" 
-        onKeyPress={this.handleKeyPress} />
+        <input id="username" type="text" placeholder="Anonymous" 
+        onKeyPress={this.handleName} />
+        <input id="new-message" type="text" placeholder="Type a message and hit ENTER"
+        onKeyPress={this.handleNewMessage} />
       </footer>
     );
   }

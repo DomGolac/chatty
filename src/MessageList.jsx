@@ -4,6 +4,10 @@ import Message from './Message.jsx';
 class MessageList extends Component {
   render() {
     console.log("Rendering <MessageList/>");
+    if (this.props.messages.length > 0) {
+      this.props.messages.map((message) => {
+      })
+    }
     return (
       <div id="message-list">
         {this.props.messages.map((message) => {
@@ -13,9 +17,6 @@ class MessageList extends Component {
             content={message.content} />;
         })
         }
-        <div className="message system">
-          Anonymous1 changed their name to nomnom.
-        </div>
       </div>
     );
   }
